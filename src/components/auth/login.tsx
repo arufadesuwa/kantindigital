@@ -1,4 +1,4 @@
-import { login, signInWithGoogle, signup } from "@/utils/server/action";
+import { login, signInWithGoogle } from "@/utils/server/action";
 
 // Komponen Ikon untuk Google dan GitHub (SVG disematkan langsung)
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -21,7 +21,7 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default function LoginPage() {
+export default function LoginPage({ message }: { message?: string }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
@@ -29,6 +29,12 @@ export default function LoginPage() {
           <h1 className="text-3xl font-bold text-gray-900">Selamat Datang</h1>
           <p className="mt-2 text-sm text-gray-600">Masuk untuk melanjutkan ke Kantin Digital</p>
         </div>
+
+        {message && (
+          <div className="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800" role="alert">
+            {message}
+          </div>
+        )}
 
         {/* Form untuk OAuth Providers */}
         <div className="space-y-4">
@@ -84,14 +90,12 @@ export default function LoginPage() {
           </button>
         </form>
         
-        {/* Form untuk Sign Up */}
+        {/* Link untuk Sign Up */}
         <div className="text-center text-sm">
           <span className="text-gray-600">Belum punya akun? </span>
-          <form action={signup} className="inline-block">
-             <button type="submit" className="font-medium text-blue-600 hover:text-blue-500">
-                Daftar di sini
-             </button>
-          </form>
+          <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+            Daftar di sini
+          </a>
         </div>
       </div>
     </div>

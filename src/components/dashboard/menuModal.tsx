@@ -108,7 +108,7 @@ export function MenuModal({ mode, menuItem, categories = [] }: MenuModalProps) {
         formDataToSend.append('id', menuItem.id.toString())
       }
 
-      const endpoint = mode === 'create' ? '/api/menu/create' : '/api/menu/update'
+      const endpoint = mode === 'create' ? '/api/menu/create' : '/api/menu/edit'
       
       const response = await fetch(endpoint, {
         method: 'POST',

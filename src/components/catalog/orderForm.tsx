@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { clearSupabaseCookies, debugCookies } from "@/utils/cookieDebug"
 import { createClient } from "@/utils/supabase/client"
-import { MessageSquare, Minus, Package, Plus, ShoppingCart } from "lucide-react"
+import { MessageSquare, Minus, Package, Plus, ShoppingBag, Clock, CreditCard } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { Button } from "@/components/ui/button"
 
 interface MenuItem {
   menuid: number
@@ -172,232 +173,202 @@ export function OrderForm({ menuItem }: OrderFormProps) {
   return (
     <>
       <Card className="border-0 shadow-none bg-transparent">
-        <CardHeader className="px-0 pb-4">
-          <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5" />
-            Pesan Menu Ini
+        <CardHeader className="px-0 pb-6">
+          <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            Order Details
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="px-0 space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-4">
-            <Label htmlFor="quantity" className="text-base font-bold text-gray-800 flex items-center gap-2">
-              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
-                <Package className="w-3 h-3 text-blue-600" />
-              </div>
-              Jumlah Pesanan
+            <Label htmlFor="quantity" className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+              Quantity
             </Label>
             
-            <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 p-4 rounded-xl border border-green-200 shadow-sm">
-              <div className="flex items-center justify-center gap-4">
-                <button
-                  type="button"
-                  className="h-12 w-12 rounded-xl border-2 border-emerald-300 hover:border-emerald-500 hover:bg-emerald-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 shadow-sm flex items-center justify-center"
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  disabled={quantity <= 1 || isLoading}
-                >
-                  <Minus className="w-5 h-5 text-emerald-700" />
-                </button>
-              
-              <div className="flex flex-col items-center gap-2">
-                <div className="bg-white rounded-lg border-2 border-emerald-300 focus-within:border-emerald-500 shadow-sm text-black">
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  max={menuItem.stok}
-                  value={quantity}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const parsed = parseInt(value, 10);
-                    if (!isNaN(parsed)) {
-                      handleQuantityChange(parsed);
-                    } else if (value === "") {
-                      setQuantity(1);
-                    }
-                  }}
-                  className="text-center text-2xl font-bold h-16 w-20 border-0 focus:ring-0 focus:outline-none bg-transparent"
-                  disabled={isLoading}
-                />
+            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-1">
+                  <button
+                    type="button"
+                    className="h-10 w-10 rounded-lg bg-white shadow-sm hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1 || isLoading}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                
+                  <div className="w-12 text-center">
+                    <Input
+                      id="quantity"
+                      type="number"
+                      min="1"
+                      max={menuItem.stok}
+                      value={quantity}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const parsed = parseInt(value, 10);
+                        if (!isNaN(parsed)) {
+                          handleQuantityChange(parsed);
+                        } else if (value === "") {
+                          setQuantity(1);
+                        }
+                      }}
+                      className="text-center text-xl font-bold border-0 focus:ring-0 focus:outline-none bg-transparent p-0 h-auto"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  
+                  <button
+                    type="button"
+                    className="h-10 w-10 rounded-lg bg-white shadow-sm hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={quantity >= menuItem.stok || isLoading}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
                 </div>
-                <span className="text-xs text-emerald-700 font-medium">porsi</span>
-              </div>
-              
-              <button
-                type="button"
-                className="h-12 w-12 rounded-xl border-2 border-emerald-300 hover:border-emerald-500 hover:bg-emerald-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 shadow-sm flex items-center justify-center"
-                onClick={() => handleQuantityChange(quantity + 1)}
-                disabled={quantity >= menuItem.stok || isLoading}
-              >
-                <Plus className="w-5 h-5 text-emerald-700" />
-              </button>
-              </div>
-              
-              <div className="mt-4 pt-3 border-t border-emerald-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-emerald-700">
-                <div className="w-2 h-2 rounded-full" style={{
-                  background:
-                  menuItem.stok > 10
-                    ? "#22c55e"
-                    : menuItem.stok > 5
-                    ? "#facc15"
-                    : "#ef4444"
-                }}></div>
-                <span>
-                  {menuItem.stok > 10
-                  ? "Stok tersedia"
-                  : menuItem.stok > 5
-                  ? "Stok menipis"
-                  : "Stok hampir habis"}
-                </span>
+
+                <div className="text-right">
+                  <div className="text-xs text-gray-500 font-medium mb-1">Total Price</div>
+                  <div className="text-xl font-bold text-primary">
+                    {formatPrice(totalPrice)}
+                  </div>
                 </div>
-                <span className="text-sm font-bold text-emerald-900">{menuItem.stok} porsi</span>
               </div>
               
-              <div className="mt-2 w-full bg-emerald-100 rounded-full h-2">
-                <div 
-                className={`h-2 rounded-full transition-all duration-300`}
-                style={{
-                  width: `${Math.min((menuItem.stok / 20) * 100, 100)}%`,
-                  background:
-                  menuItem.stok > 10
-                    ? "linear-gradient(90deg, #22c55e 60%, #4ade80 100%)"
-                    : menuItem.stok > 5
-                    ? "linear-gradient(90deg, #facc15 60%, #fde68a 100%)"
-                    : "linear-gradient(90deg, #ef4444 60%, #fca5a5 100%)"
-                }}
-                ></div>
-              </div>
+              <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                  <div className={`w-2 h-2 rounded-full ${menuItem.stok > 5 ? 'bg-green-500' : menuItem.stok > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                  {menuItem.stok > 0 ? `${menuItem.stok} portions available` : 'Out of stock'}
+                </div>
               </div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="message" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
-              Pesan Tambahan <span className="text-gray-400 font-normal">(Opsional)</span>
+            <Label htmlFor="message" className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+              Special Instructions <span className="text-gray-400 font-normal normal-case text-xs">(Optional)</span>
             </Label>
             <Textarea
               id="message"
-              placeholder="Contoh: Pedas level 3, tanpa bawang, extra sambal..."
+              placeholder="e.g. Extra spicy, no onions, separate sauce..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
               disabled={isLoading}
               maxLength={500}
-              className="resize-none border-2 focus:border-green-500 placeholder:text-gray-400"
+              className="resize-none border-gray-200 focus:border-primary focus:ring-primary/20 rounded-xl bg-gray-50 border-0"
             />
             <p className="text-xs text-gray-400 text-right">
-              {message.length}/500 karakter
+              {message.length}/500
             </p>
           </div>
           
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Pembayaran</p>
-                <p className="text-xs text-gray-500">{quantity} x {formatPrice(menuItem.price)}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                  {formatPrice(totalPrice)}
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <button
+          <Button
             type="submit"
-            className={`w-full h-14 text-lg font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+            className={`w-full h-14 text-base font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${
               isOutOfStock 
-                ? "bg-gray-300 hover:bg-gray-300 cursor-not-allowed" 
-                : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-white"
+                ? "bg-gray-100 text-gray-400 hover:bg-gray-100 cursor-not-allowed shadow-none" 
+                : "bg-gray-900 text-white hover:bg-primary"
             }`}
             disabled={isLoading || isOutOfStock || quantity < 1}
           >
             {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Memproses Pesanan...
-              </>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Processing...
+              </div>
             ) : isOutOfStock ? (
-              <>
+              <div className="flex items-center gap-2">
                 <Package className="w-5 h-5" />
-                Stok Habis
-              </>
+                Out of Stock
+              </div>
             ) : (
-              <>
-                <ShoppingCart className="w-5 h-5" />
-                Pesan Sekarang
-              </>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5" />
+                Order Now
+              </div>
             )}
-          </button>
+          </Button>
 
           {!isOutOfStock && (
-            <div className="text-center space-y-2">
-              <p className="text-sm text-gray-500">
-                💳 Pembayaran dilakukan setelah pesanan dikonfirmasi
-              </p>
-              <p className="text-xs text-gray-400">
-                ⏱️ Estimasi waktu pembuatan: 15-20 menit
-              </p>
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400">
+                  <CreditCard className="w-4 h-4" />
+                </div>
+                <div className="text-xs text-gray-500">
+                  <span className="block font-bold text-gray-900">Payment</span>
+                  Pay at cashier
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div className="text-xs text-gray-500">
+                  <span className="block font-bold text-gray-900">Est. Time</span>
+                  15-20 mins
+                </div>
+              </div>
             </div>
             )}
           </form>
         </CardContent>
       </Card>
 
-      {/* Confirmation Dialog - Moved outside Card to avoid DOM nesting issues */}
+      {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-md rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-green-600" />
-              Konfirmasi Pesanan
+            <AlertDialogTitle className="flex items-center gap-2 text-xl">
+              Confirm Order
             </AlertDialogTitle>
-            <AlertDialogDescription className="space-y-3">
-              <div className="text-left">
-                <p className="font-medium text-gray-900 mb-2">Detail Pesanan:</p>
-                <div className="bg-gray-50 p-3 rounded-lg space-y-1">
-                  <p className="text-sm"><span className="font-medium">Menu:</span> {menuItem.menuname}</p>
-                  <p className="text-sm"><span className="font-medium">Jumlah:</span> {quantity} porsi</p>
-                  <p className="text-sm"><span className="font-medium">Harga satuan:</span> {formatPrice(menuItem.price)}</p>
-                  {message && (
-                    <p className="text-sm"><span className="font-medium">Pesan tambahan:</span> {message}</p>
-                  )}
-                  <hr className="my-2" />
-                  <p className="text-sm font-bold text-green-600">
-                    <span className="font-medium text-gray-900">Total:</span> {formatPrice(totalPrice)}
-                  </p>
+            <AlertDialogDescription className="space-y-4 pt-4">
+              <div className="bg-gray-50 p-4 rounded-xl space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Item</span>
+                  <span className="font-bold text-gray-900">{menuItem.menuname}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Quantity</span>
+                  <span className="font-bold text-gray-900">{quantity}x</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Price per item</span>
+                  <span className="font-bold text-gray-900">{formatPrice(menuItem.price)}</span>
+                </div>
+                {message && (
+                  <div className="pt-2 border-t border-gray-200">
+                    <span className="text-xs text-gray-500 block mb-1">Note:</span>
+                    <p className="text-sm text-gray-900 italic">"{message}"</p>
+                  </div>
+                )}
+                <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
+                  <span className="font-bold text-gray-900">Total</span>
+                  <span className="text-xl font-bold text-primary">{formatPrice(totalPrice)}</span>
                 </div>
               </div>
-              <p className="text-center text-gray-600">
-                Apakah Anda yakin ingin melanjutkan pesanan ini?
+              <p className="text-center text-sm text-gray-500">
+                Are you sure you want to place this order?
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <button 
+          <AlertDialogFooter className="gap-3">
+            <Button 
+              variant="outline"
               onClick={handleCancelOrder}
-              className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="flex-1 rounded-xl h-12"
             >
-              Batal
-            </button>
-            <button 
+              Cancel
+            </Button>
+            <Button 
               onClick={handleConfirmOrder}
-              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 bg-primary hover:bg-primary/90 text-white rounded-xl h-12 font-bold"
               disabled={isLoading}
             >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Memproses...
-                </>
-              ) : (
-                "Ya, Pesan Sekarang"
-              )}
-            </button>
+              {isLoading ? "Processing..." : "Confirm Order"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

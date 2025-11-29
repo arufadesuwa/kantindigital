@@ -43,11 +43,11 @@ const data = {
       url: "/dashboard/user",
       icon: IconChartBar,
     },
-    {
-      title: "Maintenance",
-      url: "/dashboard/maintenance",
-      icon: IconTools,
-    },
+    // {
+    //   title: "Maintenance",
+    //   url: "/dashboard/maintenance",
+    //   icon: IconTools,
+    // },
   ],
 }
 

@@ -14,7 +14,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/error')
+    redirect(`/error?message=${encodeURIComponent(error.message)}`)
   }
 
   // Get user role to determine redirect
@@ -47,11 +47,11 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/error')
+    redirect(`/error?message=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')
-  redirect('/catalog') // Default redirect for new users
+  redirect('/login?message=Silakan cek email anda untuk konfirmasi akun') // Redirect to login with message
 }
 
 export async function logout() {
@@ -83,7 +83,7 @@ export async function signInWithGoogle() {
 
   if (error) {
     console.error('Error signing in with Google:', error);
-    return redirect('/error');
+    return redirect(`/error?message=${encodeURIComponent(error.message)}`);
   }
 
   if (data.url) {

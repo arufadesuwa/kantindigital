@@ -85,71 +85,71 @@ export function ProductGrid({ items }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {items.map((item) => (
-        <Card key={item.menuid} className="overflow-hidden hover:shadow-lg transition-shadow bg-amber-50 relative group">
-          <Link href={`/catalog/${item.menuid}`}>
-            <CardHeader className="p-0">
-              <div className="relative">
-                <Image
-                  src={item.image_url || "/placeholder.svg"}
-                  alt={item.menuname}
-                  width={300}
-                  height={200}
-                  className="w-full h-48 object-cover"
-                />
-                <Badge
-                  variant={item.stok > 10 ? "default" : item.stok > 5 ? "secondary" : "destructive"}
-                  className="absolute top-2 right-2 text-black"
-                >
-                  Stok: {item.stok}
-                </Badge>
-                {getItemQuantityInCart(item.menuid) > 0 && (
-                  <Badge
-                    variant="default"
-                    className="absolute top-2 left-2 bg-green-600"
-                  >
-                    {getItemQuantityInCart(item.menuid)} di keranjang
-                  </Badge>
-                )}
+        <Card key={item.menuid} className="group border-0 shadow-sm hover:shadow-xl transition-all duration-300 bg-white rounded-2xl overflow-hidden flex flex-col h-full relative">
+          <Link href={`/catalog/${item.menuid}`} className="block relative overflow-hidden aspect-[4/3]">
+            <Image
+              src={item.image_url || "/placeholder.svg"}
+              alt={item.menuname}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            {item.stok === 0 && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center z-10">
+                <span className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg transform -rotate-12">
+                  Out of Stock
+                </span>
               </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="mb-2">
-                <Badge variant="outline" className="text-xs bg-amber-200 text-black">
-                  {item.category?.categoryname || 'Uncategorized'}
-                </Badge>
-              </div>
-              <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-black">{item.menuname}</h3>
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-black">{formatPrice(item.price)}</span>
-              </div>
-            </CardContent>
+            )}
+            
+            {item.category && (
+              <Badge className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white border-0 shadow-sm font-medium">
+                {item.category.categoryname}
+              </Badge>
+            )}
           </Link>
-          
-          {/* Add to Cart Button */}
-          <div className="absolute bottom-4 right-4 transition-opacity">
-            <Button
-              size="icon"
-              variant={item.stok === 0 ? "secondary" : "default"}
-              className={`
-                rounded-full shadow-lg transform transition-all duration-200 
-                ${item.stok === 0 ? 'cursor-not-allowed' : 'hover:scale-110'}
-                ${addingToCart === item.menuid ? 'scale-95' : ''}
-              `}
-              onClick={(e) => handleAddToCart(e, item)}
-              disabled={item.stok === 0 || addingToCart === item.menuid}
-            >
-              {addingToCart === item.menuid ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <ShoppingCart className="h-4 w-4" />
-                  <Plus className="h-3 w-3 absolute -top-1 -right-1 bg-white text-primary rounded-full" />
-                </>
-              )}
-            </Button>
-          </div>
+
+          <CardContent className="p-5 flex flex-col flex-grow">
+            <div className="flex justify-between items-start mb-2">
+              <Link href={`/catalog/${item.menuid}`} className="group-hover:text-primary transition-colors">
+                <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{item.menuname}</h3>
+              </Link>
+            </div>
+            
+            <div className="flex items-center justify-between mt-auto pt-4">
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Price</span>
+                <span className="text-lg font-bold text-primary">
+                  {formatPrice(item.price)}
+                </span>
+              </div>
+              
+              <Button
+                size="icon"
+                className={`rounded-full w-10 h-10 shadow-md transition-all duration-300 ${
+                  item.stok === 0 
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed hover:bg-gray-100" 
+                    : "bg-gray-900 text-white hover:bg-primary hover:scale-110 active:scale-95"
+                }`}
+                onClick={(e) => handleAddToCart(e, item)}
+                disabled={item.stok === 0 || addingToCart === item.menuid}
+              >
+                {addingToCart === item.menuid ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Plus className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
+            
+            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500 font-medium">
+               <div className={`w-2 h-2 rounded-full ${item.stok > 5 ? 'bg-green-500' : item.stok > 0 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+               {item.stok > 0 ? `${item.stok} portions left` : 'Sold out'}
+            </div>
+          </CardContent>
         </Card>
       ))}
     </div>

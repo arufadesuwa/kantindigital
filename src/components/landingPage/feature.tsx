@@ -1,59 +1,132 @@
-import { Gift } from 'lucide-react';
-import Link from 'next/link';
+"use client";
+
+import { useRef } from "react";
+import { Gift, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export const Feature = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  useGSAP(
+    () => {
+      const scrollWidth = containerRef.current!.scrollWidth;
+      const viewportWidth = window.innerWidth;
+      
+      // Only enable horizontal scroll on desktop
+      if (viewportWidth > 768) {
+        gsap.to(containerRef.current, {
+            x: -(scrollWidth - viewportWidth + 100), // Scroll to the end
+            ease: "none",
+            scrollTrigger: {
+            trigger: triggerRef.current,
+            start: "top top",
+            end: `+=${scrollWidth}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            },
+        });
+      }
+    },
+    { scope: sectionRef }
+  );
+
+  const features = [
+    {
+      title: "Kelola Menu",
+      description: "Manajemen Menu Makanan & Minuman",
+      href: "/menu",
+      color: "bg-accent/20",
+      textColor: "text-accent",
+      icon: "🍔",
+    },
+    {
+      title: "Pantau Pesanan",
+      description: "Pesanan Real-time",
+      href: "/orders",
+      color: "bg-yellow-100",
+      textColor: "text-yellow-700",
+      icon: "📦",
+    },
+    {
+      title: "Laporan Penjualan",
+      description: "Rekap & Analitik",
+      href: "/laporan",
+      color: "bg-pink-100",
+      textColor: "text-pink-700",
+      icon: "📊",
+    },
+    {
+      title: "Blog & Panduan",
+      description: "Segera Hadir",
+      href: "/blog",
+      color: "bg-gray-100",
+      textColor: "text-gray-700",
+      icon: "📝",
+      disabled: true,
+    },
+    {
+      title: "Fitur Lainnya",
+      description: "Segera Hadir",
+      href: "/fitur-lain",
+      color: "bg-blue-100",
+      textColor: "text-blue-700",
+      icon: "✨",
+      disabled: true,
+    },
+  ];
 
   return (
-    <section id='kantin-digital' className='bg-white rounded-3xl p-4 my-16 max-w-6xl mx-auto'>
-      <div className='flex flex-col md:flex-row items-end justify-between w-full'>
-        <div className='flex flex-col my-12 w-full items-start justify-start gap-4'>
-          <div className='flex flex-col md:flex-row gap-2 items-end w-full justify-between '>
-            <h2 className="relative text-4xl md:text-5xl font-sans font-semibold max-w-xl text-left leading-[1em] text-base-content">Kantin Digital, <br/> <span><Gift className="inline-flex text-accent fill-accent/10 rotate-12" size={40} strokeWidth={2} /></span> Solusi Modern untuk Pengelolaan Kantin.</h2>
-            <p className='max-w-sm font-semibold text-md text-neutral/50'>Kelola menu, pesanan, dan transaksi kantin sekolah atau kantor dengan mudah, cepat, dan efisien. Semua fitur yang Anda butuhkan dalam satu platform digital.</p>
-          </div>
-          <div className='flex flex-row text-accent gap-6 items-start justify-center'>
-            <p className='text-base whitespace-nowrap font-medium'>+1,000 Pesanan Diproses</p>
-            <p className='text-base whitespace-nowrap font-medium'>Digunakan oleh 100+ Pengelola Kantin</p>
-          </div>
+    <section ref={sectionRef} className="relative bg-white overflow-hidden">
+      <div ref={triggerRef} className="h-screen flex flex-col justify-center md:block">
+        <div className="md:absolute md:top-12 md:left-12 md:z-10 px-6 py-12 md:p-0">
+            <h2 className="text-4xl md:text-6xl font-black text-gray-900 mb-4 leading-tight">
+                Fitur <br /> <span className="text-primary">Unggulan</span>
+            </h2>
+            <p className="text-gray-500 max-w-md text-lg">
+                Semua yang Anda butuhkan untuk mengelola kantin modern ada di sini.
+            </p>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 md:items-start md:justify-start gap-4 ">
-        <Link href={"/menu"} className="md:col-span-2 overflow-hidden hover:scale-101 hover:shadow-[-6px_6px_32px_8px_rgba(192,192,192,0.2)] hover:rotate-1 transition-all duration-200 ease-in-out h-[330px] overflow-hidden relative bg-accent/20 rounded-xl flex flex-row items-center gap-8 justify-between px-3 pt-3 pb-6">
-          <div className='relative flex flex-col items-start justify-center ml-4 gap-0'>
-            <p className='-rotate-1 ml-4 mb-1 text-base-content'>Kelola Menu</p>
-            <h3 className='-rotate-1 text-2xl whitespace-nowrap font-semibold text-center px-6 py-2 bg-base-content/90 text-white rounded-full'>Manajemen Menu Makanan & Minuman</h3>
-          </div>  
-          <div className="w-full object-fill rounded-xl"></div>
-        </Link>
-
-        <Link href={"/orders"} className="overflow-hidden md:hover:scale-105 hover:shadow-[-6px_6px_32px_8px_rgba(192,192,192,0.2)] hover:rotate-3 transition-all duration-200 ease-in-out relative bg-highlight/20 h-[330px] rounded-xl flex flex-col items-center justify-between px-3 py-6">
-          <div className='flex flex-col items-center justify-center gap-1'>
-            <p className='rotate-6 mb-1 text-base-content'>Pantau Pesanan</p>
-            <h3 className='rotate-6 text-2xl font-semibold text-center px-6 py-2 bg-base-content/90 text-white rounded-full'>Pesanan Real-time</h3>
-          </div>  
-          <div className="w-full object-fill rounded-xl"></div>            
-        </Link>
-
-        <Link href={"/laporan"} className="overflow-hidden md:hover:scale-105 hover:shadow-[-6px_6px_32px_8px_rgba(192,192,192,0.2)] hover:-rotate-3 transition-all duration-200 ease-in-out relative bg-secondary/20 h-[330px] rounded-xl flex flex-col items-center justify-between px-5 py-6">
-          <div className='flex flex-col items-center justify-center gap-1'>
-            <p className='-rotate-3 mb-1 text-base-content'>Laporan Penjualan</p>
-            <h3 className='-rotate-3 text-2xl font-semibold text-center px-6 py-2 bg-base-content/90 text-white rounded-full'>Rekap & Analitik</h3>
-          </div>
-          <div className="w-full object-fill rounded-xl"></div>
-        </Link>
-
-        <Link href={"/blog"} className="pointer-events-none overflow-hidden md:hover:scale-105 hover:shadow-[-6px_6px_32px_8px_rgba(192,192,192,0.2)] hover:rotate-4 transition-all duration-200 ease-in-out relative bg-base-100 h-[330px] rounded-xl flex flex-col items-center justify-center px-5 py-6">
-          <p className='-rotate-3 mb-1 text-base-content'>Blog & Panduan</p>
-          <h3 className='-rotate-3 text-2xl font-semibold text-center px-6 py-2 bg-white/75 rounded-full text-black'>Segera Hadir</h3>
-        </Link>
-
-        <Link href={"/fitur-lain"} className="pointer-events-none flex items-center justify-center overflow-hidden md:hover:scale-105 hover:shadow-[-6px_6px_32px_8px_rgba(192,192,192,0.2)] hover:-rotate-6 transition-all duration-200 ease-in-out relative bg-primary/20 h-[330px] rounded-xl flex flex-col items-center justify-center px-5 py-6">
-          <p className='rotate-6 mb-1 text-base-content'>Fitur Lainnya</p>
-          <h3 className='rotate-6 text-2xl font-semibold text-center px-6 py-2 bg-white/75 rounded-full text-black'>Segera Hadir</h3>
-        </Link>
+        <div
+          ref={containerRef}
+          className="flex flex-col md:flex-row gap-6 px-6 md:px-0 md:h-screen md:items-center md:pl-[40vw]"
+        >
+          {features.map((feature, index) => (
+            <Link
+              key={index}
+              href={feature.href}
+              className={`relative flex-shrink-0 w-full md:w-[400px] h-[400px] md:h-[500px] rounded-3xl p-8 flex flex-col justify-between transition-transform hover:scale-[1.02] ${feature.color} ${feature.disabled ? 'opacity-70 pointer-events-none' : ''}`}
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-6xl">{feature.icon}</span>
+                <div className="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center backdrop-blur-sm">
+                    <ArrowRight className={`w-6 h-6 ${feature.textColor}`} />
+                </div>
+              </div>
+              
+              <div>
+                <h3 className={`text-3xl font-bold mb-2 ${feature.textColor}`}>
+                    {feature.title}
+                </h3>
+                <p className="text-gray-600 font-medium text-lg">
+                    {feature.description}
+                </p>
+              </div>
+            </Link>
+          ))}
+          <div className="w-20 shrink-0 hidden md:block"></div> {/* Spacer */}
+        </div>
       </div>
     </section>
   );
 };
+
+

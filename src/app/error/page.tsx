@@ -3,8 +3,9 @@
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default function ErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams()
   const message = searchParams.get('message') || 'Sorry, something went wrong'
 
@@ -16,5 +17,13 @@ export default function ErrorPage() {
         <Link href="/login">Back to Login</Link>
       </Button>
     </div>
+  )
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <ErrorContent />
+    </Suspense>
   )
 }
